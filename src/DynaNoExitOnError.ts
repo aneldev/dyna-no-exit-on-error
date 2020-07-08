@@ -35,7 +35,7 @@ export class DynaNoExitOnError {
       onUncaughtException,
       onError,
     } = this._config;
-    const errorJson = this._buildErrorJson(error, origin);
+    const errorJson = DynaNoExitOnError._buildErrorJson(error, origin);
 
     onUncaughtException && onUncaughtException(error, origin, errorJson);
     onError && onError(error, origin, errorJson);
@@ -48,13 +48,13 @@ export class DynaNoExitOnError {
       onError,
     } = this._config;
 
-    const errorJson = this._buildErrorJson(error, 'Promise');
+    const errorJson = DynaNoExitOnError._buildErrorJson(error, 'Promise');
 
     onUncaughtRejection && onUncaughtRejection(error, 'Promise', errorJson);
     onError && onError(error, 'Promise', errorJson);
   };
 
-  private _buildErrorJson(error: any, origin: string): any {
+  public static _buildErrorJson(error: any, origin: string): any {
     const dynaNoExitOnErrorInfo = {
       origin,
     };

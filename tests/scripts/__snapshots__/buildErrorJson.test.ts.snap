@@ -1,0 +1,56 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`buildErrorJSON builds js native errors 1`] = `
+Object {
+  "dynaNoExitOnErrorInfo": Object {
+    "origin": "origin",
+  },
+  "fullMessage": "TypeError: Cannot read property 'name' of undefined",
+  "hasOwnProperty": false,
+  "message": "Cannot read property 'name' of undefined",
+  "name": "TypeError",
+  "stack": "TypeError: Cannot read property 'name' of undefined
+    at /Users/dennis/dev/dyna/dyna-no-exit-on-error/tests/scripts/buildErrorJson.test.ts:7:45
+    at step (/Users/dennis/dev/dyna/dyna-no-exit-on-error/tests/scripts/buildErrorJson.test.ts:33:23)
+    at Object.next (/Users/dennis/dev/dyna/dyna-no-exit-on-error/tests/scripts/buildErrorJson.test.ts:14:53)
+    at /Users/dennis/dev/dyna/dyna-no-exit-on-error/tests/scripts/buildErrorJson.test.ts:8:71
+    at new Promise (<anonymous>)
+    at Object.<anonymous>.__awaiter (/Users/dennis/dev/dyna/dyna-no-exit-on-error/tests/scripts/buildErrorJson.test.ts:4:12)
+    at Object.<anonymous> (/Users/dennis/dev/dyna/dyna-no-exit-on-error/tests/scripts/buildErrorJson.test.ts:5:33)
+    at Object.asyncJestTest (/Users/dennis/dev/dyna/dyna-no-exit-on-error/node_modules/jest-jasmine2/build/jasmineAsyncInstall.js:102:37)
+    at /Users/dennis/dev/dyna/dyna-no-exit-on-error/node_modules/jest-jasmine2/build/queueRunner.js:43:12
+    at new Promise (<anonymous>)",
+}
+`;
+
+exports[`buildErrorJSON builds new Error 1`] = `
+Object {
+  "dynaNoExitOnErrorInfo": Object {
+    "origin": "origin",
+  },
+  "fullMessage": "Error: Custom new error",
+  "hasOwnProperty": false,
+  "message": "Custom new error",
+  "name": "Error",
+  "stack": "Error: Custom new error
+    at /Users/dennis/dev/dyna/dyna-no-exit-on-error/tests/scripts/buildErrorJson.test.ts:13:46
+    at step (/Users/dennis/dev/dyna/dyna-no-exit-on-error/tests/scripts/buildErrorJson.test.ts:33:23)
+    at Object.next (/Users/dennis/dev/dyna/dyna-no-exit-on-error/tests/scripts/buildErrorJson.test.ts:14:53)
+    at /Users/dennis/dev/dyna/dyna-no-exit-on-error/tests/scripts/buildErrorJson.test.ts:8:71
+    at new Promise (<anonymous>)
+    at Object.<anonymous>.__awaiter (/Users/dennis/dev/dyna/dyna-no-exit-on-error/tests/scripts/buildErrorJson.test.ts:4:12)
+    at Object.<anonymous> (/Users/dennis/dev/dyna/dyna-no-exit-on-error/tests/scripts/buildErrorJson.test.ts:12:26)
+    at Object.asyncJestTest (/Users/dennis/dev/dyna/dyna-no-exit-on-error/node_modules/jest-jasmine2/build/jasmineAsyncInstall.js:102:37)
+    at /Users/dennis/dev/dyna/dyna-no-exit-on-error/node_modules/jest-jasmine2/build/queueRunner.js:43:12
+    at new Promise (<anonymous>)",
+}
+`;
+
+exports[`buildErrorJSON builds object Errors 1`] = `
+Object {
+  "dynaNoExitOnErrorInfo": Object {
+    "origin": "origin",
+  },
+  "message": "Custom object error",
+}
+`;

@@ -1,6 +1,6 @@
 {
   "name": "dyna-no-exit-on-error",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "The dyna-no-exit-on-error",
   "repository": {
     "type": "git",
@@ -26,7 +26,7 @@
     "build": "rm -rf ./dist && tsc --p tsconfig.commonJs.json && tsc --p tsconfig.esNext.json",
     "build-watch-commonJs": "rm -rf ./dist/commonJs && tsc --watch --p tsconfig.commonJs.json",
     "build-watch-esNext": "rm -rf ./dist/esNext && tsc --watch --p tsconfig.esNext.json",
-    "test": "jest --coverage --no-cache --runInBand",
+    "test": "node ./dist/commonJs/nonJestTests/index.js && jest --coverage --no-cache --runInBand",
     "test-watch": "jest --watch --verbose --runInBand",
     "test-non-jest-watch": "nodemon node ./dist/commonJs/nonJestTests/index.js",
     "commit": "git add -u && git add -A && git commit -m",

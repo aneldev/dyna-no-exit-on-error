@@ -19,14 +19,14 @@ var DynaNoExitOnError = /** @class */ (function () {
         this._config = _config;
         this._handleUncaughtException = function (error, origin) {
             var _a = _this._config, onUncaughtException = _a.onUncaughtException, onError = _a.onError;
-            var errorJson = _this._buildErrorJson(error, origin);
+            var errorJson = DynaNoExitOnError._buildErrorJson(error, origin);
             onUncaughtException && onUncaughtException(error, origin, errorJson);
             onError && onError(error, origin, errorJson);
         };
         this._handleUncaughtRejection = function (error, promise) {
             promise; // 4ts
             var _a = _this._config, onUncaughtRejection = _a.onUncaughtRejection, onError = _a.onError;
-            var errorJson = _this._buildErrorJson(error, 'Promise');
+            var errorJson = DynaNoExitOnError._buildErrorJson(error, 'Promise');
             onUncaughtRejection && onUncaughtRejection(error, 'Promise', errorJson);
             onError && onError(error, 'Promise', errorJson);
         };
@@ -49,7 +49,7 @@ var DynaNoExitOnError = /** @class */ (function () {
     DynaNoExitOnError.prototype.dispose = function () {
         this.disable();
     };
-    DynaNoExitOnError.prototype._buildErrorJson = function (error, origin) {
+    DynaNoExitOnError._buildErrorJson = function (error, origin) {
         var dynaNoExitOnErrorInfo = {
             origin: origin,
         };
