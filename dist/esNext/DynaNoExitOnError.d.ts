@@ -11,6 +11,5 @@ export declare class DynaNoExitOnError {
     dispose(): void;
     private _handleUncaughtException;
     private _handleUncaughtRejection;
-    private _triggerError;
-    private _buildErrorJson;
+    static _buildErrorJson(error: any, origin: string): any;
 }
