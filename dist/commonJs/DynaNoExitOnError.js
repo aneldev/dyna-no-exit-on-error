@@ -11,19 +11,24 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DynaNoExitOnError = void 0;
 var dyna_stringify_1 = require("dyna-stringify");
 var isNode_1 = require("./isNode");
 var DynaNoExitOnError = /** @class */ (function () {
     function DynaNoExitOnError(_config) {
         var _this = this;
         this._config = _config;
-        this._handleUncaughtException = function (err, origin) {
-            _this._triggerError(err, origin);
+        this._handleUncaughtException = function (error, origin) {
+            var _a = _this._config, onUncaughtException = _a.onUncaughtException, onError = _a.onError;
+            var errorJson = _this._buildErrorJson(error, origin);
+            onUncaughtException && onUncaughtException(error, origin, errorJson);
+            onError && onError(error, origin, errorJson);
         };
-        this._handleUncaughtRejection = function (reason, promise) {
+        this._handleUncaughtRejection = function (error, promise) {
             promise; // 4ts
-            _this._triggerError(reason, 'Promise');
+            var _a = _this._config, onUncaughtRejection = _a.onUncaughtRejection, onError = _a.onError;
+            var errorJson = _this._buildErrorJson(error, 'Promise');
+            onUncaughtRejection && onUncaughtRejection(error, 'Promise', errorJson);
+            onError && onError(error, 'Promise', errorJson);
         };
         if (Object.keys(this._config).length === 0)
             console.warn("DynaNoExitOnError called with empty configuration, all uncaught exceptions and rejections will be swallowed! Help how to configure it: http://github.com/aneldev/dyna-no-exit-on-error");
@@ -43,13 +48,6 @@ var DynaNoExitOnError = /** @class */ (function () {
     };
     DynaNoExitOnError.prototype.dispose = function () {
         this.disable();
-    };
-    DynaNoExitOnError.prototype._triggerError = function (error, origin) {
-        var _a = this._config, onUncaughtException = _a.onUncaughtException, onUncaughtRejection = _a.onUncaughtRejection, onError = _a.onError;
-        var errorJson = this._buildErrorJson(error, origin);
-        onUncaughtException && onUncaughtException(error, origin, errorJson);
-        onUncaughtRejection && onUncaughtRejection(error, origin, errorJson);
-        onError && onError(error, origin, errorJson);
     };
     DynaNoExitOnError.prototype._buildErrorJson = function (error, origin) {
         var dynaNoExitOnErrorInfo = {

@@ -38,29 +38,80 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var index_1 = require("../index");
 var testValidations_1 = require("./testValidations");
+var dyna_stringify_1 = require("dyna-stringify");
+var errors = [];
+var jsErrors = [];
+var promiseRejections = [];
+var clearErrors = function () {
+    errors = [];
+    jsErrors = [];
+    promiseRejections = [];
+};
+var getErrorReport = function () {
+    return dyna_stringify_1.dynaStringify({
+        errors: errors,
+        jsErrors: jsErrors,
+        promiseRejections: promiseRejections,
+    }, {
+        spaces: 2,
+    });
+};
+var hasErrors = function () { return !errors.length && !jsErrors.length && !promiseRejections.length; };
+var dynaNoExitOnError = new index_1.DynaNoExitOnError({
+    onError: function (error) { return errors.push(error); },
+    onUncaughtException: function (error, origin, errorJson) { return jsErrors.push(errorJson) && error && origin; },
+    onUncaughtRejection: function (error, origin, errorJson) { return promiseRejections.push(errorJson) && error && origin; },
+});
+dynaNoExitOnError.disable();
 (function () { return __awaiter(void 0, void 0, void 0, function () {
-    var errors, dynaNoExitOnError;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                errors = [];
+                testValidations_1.describe('DynaNoExitOnError catch JS errors');
+                clearErrors();
                 try {
                     process.__notExistProperty.name;
                 }
                 catch (e) {
                     testValidations_1.success('JS error caught without dynaNoExitOnError');
                 }
-                dynaNoExitOnError = new index_1.DynaNoExitOnError({
-                    onError: function (error) { return errors.push(error); },
-                });
+                dynaNoExitOnError.enable();
+                testValidations_1.expect('No errors', hasErrors(), true);
                 setTimeout(function () {
                     process.__notExistProperty.name;
                 }, 5);
                 return [4 /*yield*/, new Promise(function (r) { return setTimeout(r, 20); })];
             case 1:
                 _a.sent();
-                testValidations_1.expect('Error caught by  dynaNoExitOnError', errors.length, 1);
+                testValidations_1.expect('Error caught by dynaNoExitOnError', errors.length, 1, getErrorReport());
+                testValidations_1.expect('JS error caught by dynaNoExitOnError', jsErrors.length, 1, getErrorReport());
+                testValidations_1.expect('No Promise rejection caught by dynaNoExitOnError', promiseRejections.length, 0, getErrorReport());
                 dynaNoExitOnError.dispose();
+                try {
+                    process.__notExistProperty.name;
+                }
+                catch (e) {
+                    testValidations_1.success('JS error caught after dynaNoExitOnError.dispose');
+                }
+                testValidations_1.describe('DynaNoExitOnError catch Promise rejections');
+                clearErrors();
+                dynaNoExitOnError.enable();
+                testValidations_1.expect('No errors, before', hasErrors(), true);
+                setTimeout(function () {
+                    Promise
+                        .resolve()
+                        .then(function () {
+                        throw { message: 'Custom Promise error', code: 85294324 };
+                    });
+                }, 5);
+                testValidations_1.expect('No errors, after async start of rejection', hasErrors(), true);
+                return [4 /*yield*/, new Promise(function (r) { return setTimeout(r, 20); })];
+            case 2:
+                _a.sent();
+                testValidations_1.expect('Error caught by dynaNoExitOnError', errors.length, 1, getErrorReport());
+                testValidations_1.expect('No JS error caught by dynaNoExitOnError', jsErrors.length, 0, getErrorReport());
+                testValidations_1.expect('Promise rejection caught by dynaNoExitOnError', promiseRejections.length, 1, getErrorReport());
+                dynaNoExitOnError.disable();
                 return [2 /*return*/];
         }
     });

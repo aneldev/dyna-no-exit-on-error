@@ -16,7 +16,7 @@ export class DynaNoExitOnError {
 
   public enable(): void {
     if (!isNode) return;
-    process.on('uncaughtException', this._handleUncaughtException);
+    process.on('uncaughtException' as any, this._handleUncaughtException);
     process.on('unhandledRejection', this._handleUncaughtRejection);
   }
 
@@ -30,28 +30,29 @@ export class DynaNoExitOnError {
     this.disable();
   }
 
-  private _handleUncaughtException = (err: any, origin: string): void => {
-    this._triggerError(err, origin);
-  };
-
-  private _handleUncaughtRejection = (reason: any, promise: Promise<any>): void => {
-    promise; // 4ts
-    this._triggerError(reason, 'Promise');
-  };
-
-  private _triggerError(error: any, origin: string): void {
+  private _handleUncaughtException = (error: any, origin: string): void => {
     const {
       onUncaughtException,
+      onError,
+    } = this._config;
+    const errorJson = this._buildErrorJson(error, origin);
+
+    onUncaughtException && onUncaughtException(error, origin, errorJson);
+    onError && onError(error, origin, errorJson);
+  };
+
+  private _handleUncaughtRejection = (error: any, promise: Promise<any>): void => {
+    promise; // 4ts
+    const {
       onUncaughtRejection,
       onError,
     } = this._config;
 
-    const errorJson = this._buildErrorJson(error, origin);
+    const errorJson = this._buildErrorJson(error, 'Promise');
 
-    onUncaughtException && onUncaughtException(error, origin, errorJson);
-    onUncaughtRejection && onUncaughtRejection(error, origin, errorJson);
-    onError && onError(error, origin, errorJson);
-  }
+    onUncaughtRejection && onUncaughtRejection(error, 'Promise', errorJson);
+    onError && onError(error, 'Promise', errorJson);
+  };
 
   private _buildErrorJson(error: any, origin: string): any {
     const dynaNoExitOnErrorInfo = {
