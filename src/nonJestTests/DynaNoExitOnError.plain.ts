@@ -23,7 +23,7 @@ const getErrorReport = () =>
       spaces: 2,
     });
 
-const hasErrors = (): boolean => !errors.length && !jsErrors.length && !promiseRejections.length;
+const hasErrors = (): boolean => !!errors.length;
 
 const dynaNoExitOnError = new DynaNoExitOnError({
   onError: error => errors.push(error),
@@ -33,6 +33,8 @@ const dynaNoExitOnError = new DynaNoExitOnError({
 dynaNoExitOnError.disable();
 
 (async () => {
+  console.clear();
+
   describe('DynaNoExitOnError catch JS errors');
   clearErrors();
 
@@ -44,12 +46,15 @@ dynaNoExitOnError.disable();
 
   dynaNoExitOnError.enable();
 
-  expect('No errors', hasErrors(), true);
+  expect('No errors', hasErrors(), false, getErrorReport());
 
   setTimeout(() => {
     (process as any).__notExistProperty.name;
   }, 5);
-  await new Promise(r => setTimeout(r, 20));
+
+  await new Promise(r => setTimeout(r, 200));
+
+  expect('Has errors after execution', hasErrors(), true, getErrorReport());
 
   expect('Error caught by dynaNoExitOnError', errors.length, 1, getErrorReport());
   expect('JS error caught by dynaNoExitOnError', jsErrors.length, 1, getErrorReport());
@@ -67,7 +72,7 @@ dynaNoExitOnError.disable();
   clearErrors();
   dynaNoExitOnError.enable();
 
-  expect('No errors, before', hasErrors(), true);
+  expect('No errors, before', hasErrors(), false, getErrorReport());
 
   setTimeout(() => {
     Promise
@@ -77,14 +82,15 @@ dynaNoExitOnError.disable();
       });
   }, 5);
 
-  expect('No errors, after async start of rejection', hasErrors(), true);
+  expect('No errors, after async start of rejection', hasErrors(), false, getErrorReport());
 
   await new Promise(r => setTimeout(r, 20));
+
+  expect('Has errors, after async execution of rejection', hasErrors(), true, getErrorReport());
 
   expect('Error caught by dynaNoExitOnError', errors.length, 1, getErrorReport());
   expect('No JS error caught by dynaNoExitOnError', jsErrors.length, 0, getErrorReport());
   expect('Promise rejection caught by dynaNoExitOnError', promiseRejections.length, 1, getErrorReport());
 
   dynaNoExitOnError.disable();
-
 })();
